@@ -1,0 +1,116 @@
+name: veloren
+base: core18
+summary: A novel multiplayer voxel RPG
+description: |
+  Veloren is a multiplayer voxel RPG written in Rust.
+  Veloren takes inspiration from games such as Cube World, Minecraft and Dwarf Fortress.
+  The game is currently under heavy development, but is playable.
+confinement: strict
+adopt-info: veloren
+
+apps:
+  veloren:
+    command: launcher veloren-voxygen
+    environment:
+      DESKTOP_LAUNCH: 1
+    plugs:
+      - opengl
+      - wayland
+      - x11
+      - desktop
+      - pulseaudio
+      - joystick
+      - network
+      - network-bind
+      - home
+  server:
+    command: launcher veloren-server-cli
+    plugs:
+      - network
+      - network-bind
+
+parts:
+  launcher:
+    plugin: dump
+    source: launcher
+    organize:
+      launcher.sh: bin/launcher
+    stage:
+      - bin/launcher
+  veloren:
+    plugin: rust
+    rust-channel: nightly
+    source: https://gitlab.com/veloren/veloren.git
+    build-packages:
+      - git-lfs
+      - libglib2.0-dev
+      - libcairo2-dev
+      - libasound2-dev
+      - libpango1.0-dev
+      - libatk1.0-dev
+      - libgdk-pixbuf2.0-dev
+      - libgtk-3-dev
+      - libasound2
+      - libatk-bridge2.0-0
+      - libatk1.0-0
+      - libatspi2.0-0
+      - libcairo-gobject2
+      - libcairo2
+      - libdatrie1
+      - libepoxy0
+      - libfontconfig1
+      - libfreetype6
+      - libgdk-pixbuf2.0-0
+      - libgraphite2-3
+      - libgtk-3-0
+      - libharfbuzz0b
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpixman-1-0
+      - libpng16-16
+      - libthai0
+      - libwayland-client0
+      - libwayland-cursor0
+      - libwayland-egl1
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcomposite1
+      - libxdamage1
+      - libxext6
+      - libxi6
+      - libxinerama1
+      - libxkbcommon0
+      - libxrandr2
+      - libx11-xcb1
+      - libgl1-mesa-glx
+    stage-packages:
+      - libx11-6
+      - libxcursor1
+    override-pull: |
+      snapcraftctl pull
+      git-lfs install
+      git-lfs fetch
+      git-lfs checkout
+      version="$(git describe --always | sed -e 's/-/+git/;y/-/./')"
+      snapcraftctl set-version "$version"
+      snapcraftctl set-grade "devel"
+    override-build: |
+      export PATH=:/root/.cargo/bin:$PATH
+      rustup toolchain install nightly
+      rustup override set nightly
+      # Cannot install virtual manifest packages directly due to https://github.com/rust-lang/cargo/issues/4101
+      cargo +nightly build --release --bin veloren-voxygen --bin veloren-server-cli
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp target/release/veloren-voxygen $SNAPCRAFT_PART_INSTALL/bin
+      cp target/release/veloren-server-cli $SNAPCRAFT_PART_INSTALL/bin
+      cp -r assets $SNAPCRAFT_PART_INSTALL/usr/share/veloren
+      ln -s ../usr/share/veloren $SNAPCRAFT_PART_INSTALL/bin/assets
+  glib-only:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: glib-only
+    plugin: make
+    build-packages:
+      - libglib2.0-dev
+    stage-packages:
+      - libglib2.0-bin
