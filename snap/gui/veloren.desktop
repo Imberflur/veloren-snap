@@ -6,4 +6,4 @@ Exec=veloren
 Categories=Game
 Keywords=veloren
 Icon=${SNAP}/usr/share/icons/veloren.png
-Terminal=false
+Terminal=true
