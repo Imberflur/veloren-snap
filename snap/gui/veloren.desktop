@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Veloren
+Type=Application
+Comment=An open-source multiplayer voxel RPG
+Exec=veloren
+Categories=Game
+Keywords=veloren
+Icon=${SNAP}/usr/share/icons/veloren.png
+Terminal=false

@@ -13,6 +13,7 @@ apps:
     command: launcher veloren-voxygen
     environment:
       DESKTOP_LAUNCH: 1
+    desktop: usr/share/applications/veloren.desktop
     plugs:
       - opengl
       - wayland
@@ -37,6 +38,15 @@ parts:
       launcher.sh: bin/launcher
     stage:
       - bin/launcher
+  desktop-file:
+    plugin: dump
+    source: .
+    organize:
+      snap/gui/veloren.desktop: usr/share/applications/veloren.desktop
+      snap/gui/icon_x256.png: usr/share/icons/veloren.png
+    stage:
+      - usr/share/applications/veloren.desktop
+      - usr/share/icons/veloren.png
   veloren:
     plugin: rust
     rust-channel: nightly
