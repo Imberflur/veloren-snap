@@ -100,7 +100,7 @@ parts:
     override-pull: |
       snapcraftctl pull
       git-lfs install
-      git config lfs.url = "https://gitlab.com/veloren/veloren.git"
+      git config lfs.url "https://gitlab.com/veloren/veloren.git"
       git-lfs fetch
       git-lfs checkout
       version="$(git describe --always | sed -e 's/-/+git/;y/-/./')"
