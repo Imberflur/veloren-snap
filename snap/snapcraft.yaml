@@ -50,7 +50,7 @@ parts:
   veloren:
     plugin: rust
     rust-channel: nightly
-    source: https://gitlab.com/veloren/veloren.git
+    source: https://github.com/veloren/veloren.git
     build-packages:
       - git-lfs
       - libglib2.0-dev
