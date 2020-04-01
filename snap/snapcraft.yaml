@@ -50,7 +50,7 @@ parts:
   veloren:
     plugin: rust
     rust-channel: nightly
-    source: https://github.com/veloren/veloren.git
+    source: https://gitlab.com/veloren/veloren.git
     build-packages:
       - git-lfs
       - libglib2.0-dev
@@ -60,6 +60,7 @@ parts:
       - libatk1.0-dev
       - libgdk-pixbuf2.0-dev
       - libgtk-3-dev
+      - libudev-dev
     stage-packages:
       - libasound2
       - libatk-bridge2.0-0
@@ -97,6 +98,7 @@ parts:
       - libgl1-mesa-glx
       - libx11-6
       - libxcursor1
+      - libudev1
     override-pull: |
       snapcraftctl pull
       git-lfs install
