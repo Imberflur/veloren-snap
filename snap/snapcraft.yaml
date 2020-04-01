@@ -8,6 +8,9 @@ description: |
 confinement: strict
 adopt-info: veloren
 
+architectures:
+  - build-on: amd64
+
 apps:
   veloren:
     command: launcher veloren-voxygen
