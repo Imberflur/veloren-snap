@@ -1,5 +1,5 @@
 name: veloren
-base: core18
+base: core20
 summary: A novel multiplayer voxel RPG
 description: |
   Veloren is a multiplayer voxel RPG written in Rust.
@@ -13,7 +13,8 @@ architectures:
 
 apps:
   veloren:
-    command: launcher veloren-voxygen
+    command: bin/launcher $SNAP/bin/veloren-voxygen
+    command-chain: ["snap/command-chain/alsa-launch"]
     environment:
       DESKTOP_LAUNCH: 1
     desktop: usr/share/applications/veloren.desktop
@@ -26,33 +27,47 @@ apps:
       - joystick
       - network
       - network-bind
+      - home
   server:
-    command: launcher veloren-server-cli
+    command: bin/launcher $SNAP/bin/veloren-server-cli
     plugs:
       - network
       - network-bind
 
+# Needed for routing ALSA through Pulseaudio
+# https://snapcraft-alsa.readthedocs.io/en/latest/index.html
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+  /usr/share/alsa:
+    symlink: $SNAP/usr/share/alsa
+
 parts:
   launcher:
     plugin: dump
-    source: launcher
+    source: snap/local/launcher
     organize:
       launcher.sh: bin/launcher
     stage:
       - bin/launcher
+  icon-file:
+    plugin: dump
+    source: https://gitlab.com/veloren/veloren.git
+    organize:
+      assets/voxygen/net.veloren.veloren.png: usr/share/icons/veloren.png
+    stage:
+      - usr/share/icons/veloren.png
   desktop-file:
     plugin: dump
     source: .
     organize:
       snap/gui/veloren.desktop: usr/share/applications/veloren.desktop
-      snap/gui/icon_x256.png: usr/share/icons/veloren.png
     stage:
       - usr/share/applications/veloren.desktop
-      - usr/share/icons/veloren.png
   veloren:
     plugin: rust
-    rust-channel: nightly
-    source: https://github.com/veloren/veloren.git
+    source: https://gitlab.com/veloren/veloren.git
+    rust-path: [voxygen]
     build-packages:
       - git-lfs
       - libglib2.0-dev
@@ -63,6 +78,8 @@ parts:
       - libgdk-pixbuf2.0-dev
       - libgtk-3-dev
       - libudev-dev
+      - libxcb-shape0-dev
+      - libxcb-xfixes0-dev
     stage-packages:
       - libasound2
       - libatk-bridge2.0-0
@@ -89,6 +106,8 @@ parts:
       - libwayland-egl1
       - libxcb-render0
       - libxcb-shm0
+      - libxcb-shape0
+      - libxcb-xfixes0
       - libxcomposite1
       - libxdamage1
       - libxext6
@@ -111,16 +130,29 @@ parts:
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "devel"
     override-build: |
-      export PATH=:/root/.cargo/bin:$PATH
-      rustup toolchain install nightly
-      rustup override set nightly
+      if ! command -v rustup 2>/dev/null; then
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile=minimal
+        export PATH="${HOME}/.cargo/bin:${PATH}"
+      fi
+      rustup override set $(cat rust-toolchain)
       # Cannot install virtual manifest packages directly due to https://github.com/rust-lang/cargo/issues/4101
-      cargo +nightly build --release --bin veloren-voxygen --bin veloren-server-cli
+      cargo build --release --bin veloren-voxygen --bin veloren-server-cli
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cp target/release/veloren-voxygen $SNAPCRAFT_PART_INSTALL/bin
       cp target/release/veloren-server-cli $SNAPCRAFT_PART_INSTALL/bin
       cp -r assets $SNAPCRAFT_PART_INSTALL/usr/share/veloren
       ln -s ../usr/share/veloren $SNAPCRAFT_PART_INSTALL/bin/assets
+  # Needed for routing ALSA through Pulseaudio
+  # https://snapcraft-alsa.readthedocs.io/en/latest/index.html
+  alsa-mixin:
+    plugin: dump
+    source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-subdir: snapcraft-assets
+    build-packages:
+      - libasound2-dev
+    stage-packages:
+      - libasound2
+      - libasound2-plugins
   glib-only:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
     source-subdir: glib-only
