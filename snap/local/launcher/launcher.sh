@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Veloren currently saves settings in the CWD.
-# Therefore we change the working directory to the snap user data folder
-cd $SNAP_USER_DATA
-if [ -z "$DESKTOP_LAUNCH" ]
-then
-    exec "$@"
-else
-    desktop-launch "$@"
-fi
+export VELOREN_USERDATA=$SNAP_USER_DATA
+# Explicitly override VOXYGEN_LOGS because otherwise
+# Veloren saves invalid log paths from previous snap revisions
+# in its settings file.
+export VOXYGEN_LOGS=$SNAP_USER_DATA/voxygen/logs
+
+exec "$@"

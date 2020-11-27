@@ -13,23 +13,26 @@ architectures:
 
 apps:
   veloren:
-    command: bin/launcher $SNAP/bin/veloren-voxygen
-    command-chain: ["snap/command-chain/alsa-launch"]
-    environment:
-      DESKTOP_LAUNCH: 1
+    adapter: full
+    command: bin/veloren-voxygen
+    command-chain:
+      - "snap/command-chain/alsa-launch"
+      - "bin/desktop-launch"
+      - "bin/launcher"
     desktop: usr/share/applications/veloren.desktop
     plugs:
       - opengl
       - wayland
       - x11
       - desktop
+      - desktop-legacy # needed for ibus support
       - audio-playback
       - joystick
       - network
       - network-bind
-      - home
+      - alsa
   server:
-    command: bin/launcher $SNAP/bin/veloren-server-cli
+    command: bin/veloren-server-cli
     plugs:
       - network
       - network-bind
@@ -67,6 +70,7 @@ parts:
   veloren:
     plugin: rust
     source: https://gitlab.com/veloren/veloren.git
+    source-branch: timsueberkrueb/log-path-override
     rust-path: [voxygen]
     build-packages:
       - git-lfs
@@ -120,6 +124,7 @@ parts:
       - libx11-6
       - libxcursor1
       - libudev1
+      - libibus-1.0-5 # needed for ibus support
     override-pull: |
       snapcraftctl pull
       git-lfs install
@@ -129,6 +134,8 @@ parts:
       version="$(git describe --always | sed -e 's/-/+git/;y/-/./')"
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "devel"
+    build-environment:
+      - VELOREN_USERDATA_STRATEGY: system
     override-build: |
       if ! command -v rustup 2>/dev/null; then
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile=minimal
@@ -147,6 +154,7 @@ parts:
   alsa-mixin:
     plugin: dump
     source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-commit: c08d5df21761b56679088b06411694b00fff9475
     source-subdir: snapcraft-assets
     build-packages:
       - libasound2-dev
