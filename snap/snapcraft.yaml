@@ -70,7 +70,6 @@ parts:
   veloren:
     plugin: rust
     source: https://gitlab.com/veloren/veloren.git
-    source-branch: timsueberkrueb/log-path-override
     rust-path: [voxygen]
     build-packages:
       - git-lfs
