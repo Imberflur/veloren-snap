@@ -62,9 +62,14 @@ parts:
       - usr/share/icons/veloren.png
   desktop-file:
     plugin: dump
-    source: .
+    source: https://gitlab.com/veloren/veloren.git
+    override-pull: |
+      snapcraftctl pull
+      # Patch icon path and executable name in desktop file
+      sed -i.new 's|Exec=.*|Exec=veloren|g;s|Icon=.*|Icon=${SNAP}/usr/share/icons/veloren.png|g' \
+        assets/voxygen/net.veloren.veloren.desktop
     organize:
-      snap/gui/veloren.desktop: usr/share/applications/veloren.desktop
+      assets/voxygen/net.veloren.veloren.desktop: usr/share/applications/veloren.desktop
     stage:
       - usr/share/applications/veloren.desktop
   veloren:

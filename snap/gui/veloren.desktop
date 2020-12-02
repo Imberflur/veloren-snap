@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Veloren
-Comment=Veloren is a multiplayer voxel RPG written in Rust
-Exec=veloren
-Categories=Game;Simulation;
-Keywords=veloren;sandbox;world;blocks;nodes;multiplayer;roleplaying;
-Icon=${SNAP}/usr/share/icons/veloren.png
-Terminal=false
