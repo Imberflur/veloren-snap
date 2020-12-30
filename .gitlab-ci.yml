@@ -4,6 +4,8 @@ stages:
 snap:
   stage: deploy
   image: "cibuilds/snapcraft:core20"
+  variables:
+    SNAPCRAFT_BUILD_INFO: 1
   script:
     - snapcraft
     - echo $SNAPCRAFT_LOGIN_DATA | base64 --decode --ignore-garbage > snapcraft.login
