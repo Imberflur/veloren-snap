@@ -88,6 +88,8 @@ parts:
       - libudev-dev
       - libxcb-shape0-dev
       - libxcb-xfixes0-dev
+      - libxcb-xkb-dev
+      - libxkbcommon-dev
     override-pull: |
       snapcraftctl pull
       git-lfs install
