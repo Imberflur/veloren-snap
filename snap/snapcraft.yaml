@@ -90,6 +90,7 @@ parts:
       - libxcb-xfixes0-dev
       - libxcb-xkb-dev
       - libxkbcommon-dev
+      - libxkbcommon-x11-dev
     override-pull: |
       snapcraftctl pull
       git-lfs install
