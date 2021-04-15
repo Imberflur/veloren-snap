@@ -159,6 +159,7 @@ parts:
     - libudev1
     - libibus-1.0-5 # needed for ibus support
     - libegl1-mesa # bundle libEGL
+    - libxkbcommon-x11-0
   # Needed for routing ALSA through Pulseaudio
   # https://snapcraft-alsa.readthedocs.io/en/latest/index.html
   alsa-mixin:
