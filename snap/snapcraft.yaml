@@ -33,6 +33,8 @@ apps:
       - alsa
   server:
     command: bin/veloren-server-cli
+    command-chain:
+      - "bin/launcher"
     plugs:
       - network
       - network-bind
