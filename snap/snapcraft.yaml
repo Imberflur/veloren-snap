@@ -93,6 +93,11 @@ parts:
       - libxcb-xkb-dev
       - libxkbcommon-dev
       - libxkbcommon-x11-dev
+      # needed for shaderc:
+      - cmake
+      - ninja-build
+      - python3
+      - python-is-python3
     override-pull: |
       snapcraftctl pull
       git-lfs install
