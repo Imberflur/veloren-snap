@@ -46,7 +46,12 @@ layout:
     symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
   /usr/share/alsa:
     symlink: $SNAP/usr/share/alsa
-
+  /usr/share/vulkan:
+    symlink: $SNAP/usr/share/vulkan
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_intel.so:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_intel.so
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so:
+    symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so
 parts:
   launcher:
     plugin: dump
@@ -168,6 +173,8 @@ parts:
     - libibus-1.0-5 # needed for ibus support
     - libegl1-mesa # bundle libEGL
     - libxkbcommon-x11-0
+    - libvulkan1
+    - mesa-vulkan-drivers
   # Needed for routing ALSA through Pulseaudio
   # https://snapcraft-alsa.readthedocs.io/en/latest/index.html
   alsa-mixin:
