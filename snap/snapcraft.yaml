@@ -79,9 +79,7 @@ parts:
       - usr/share/applications/veloren.desktop
   airshipper:
     plugin: rust
-    # FIXME: switch back to upstream Airshipper once the profiles fix lands
-    source: https://github.com/timsueberkrueb/Airshipper.git
-    source-branch: dont-persist-the-profile-path
+    source: https://github.com/Songtronix/Airshipper.git
     rust-path: [client]
     build-packages:
       - git-lfs
