@@ -99,7 +99,7 @@ parts:
       git config lfs.url "https://github.com/Songtronix/Airshipper.git/info/lfs"
       git-lfs fetch
       git-lfs checkout
-      version="$(git describe --always | sed -e 's/-/+git/;y/-/./')"
+      version="$(git describe --tags --always | sed -e 's/-/+git/;y/-/./')"
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "devel"
   veloren-runtime:
