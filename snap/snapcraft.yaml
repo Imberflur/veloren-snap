@@ -1,12 +1,16 @@
 name: veloren
 base: core20
-summary: A novel multiplayer voxel RPG
+summary: Open-source multiplayer voxel RPG
 description: |
-  Veloren is a multiplayer voxel RPG written in Rust.
-  Veloren takes inspiration from games such as Cube World, Minecraft and Dwarf Fortress.
-  The game is currently under heavy development, but is playable.
+  Veloren is a multiplayer voxel RPG written in Rust. It is inspired by games such as
+  Cube World, Legend of Zelda: Breath of the Wild, Dwarf Fortress and Minecraft.
+
+  Veloren is fully open-source, licensed under GPL 3. It uses original graphics,
+  musics and other assets created by its community. Being contributor-driven,
+  its development community and user community is one and the same: developers,
+  players, artists and musicians come together to develop the game.
 confinement: strict
-adopt-info: veloren
+adopt-info: airshipper
 
 architectures:
   - build-on: amd64
@@ -14,7 +18,7 @@ architectures:
 apps:
   veloren:
     adapter: full
-    command: bin/veloren-voxygen
+    command: bin/airshipper
     command-chain:
       - "snap/command-chain/alsa-launch"
       - "bin/desktop-launch"
@@ -31,13 +35,6 @@ apps:
       - network
       - network-bind
       - alsa
-  server:
-    command: bin/veloren-server-cli
-    command-chain:
-      - "bin/launcher"
-    plugs:
-      - network
-      - network-bind
 
 # Needed for routing ALSA through Pulseaudio
 # https://snapcraft-alsa.readthedocs.io/en/latest/index.html
@@ -52,6 +49,7 @@ layout:
     symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_intel.so
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so:
     symlink: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libvulkan_radeon.so
+
 parts:
   launcher:
     plugin: dump
@@ -79,55 +77,31 @@ parts:
       assets/voxygen/net.veloren.veloren.desktop: usr/share/applications/veloren.desktop
     stage:
       - usr/share/applications/veloren.desktop
-  veloren:
+  airshipper:
     plugin: rust
-    source: https://gitlab.com/veloren/veloren.git
-    rust-path: [voxygen]
+    # FIXME: switch back to upstream Airshipper once the profiles fix lands
+    source: https://github.com/timsueberkrueb/Airshipper.git
+    source-branch: dont-persist-the-profile-path
+    rust-path: [client]
     build-packages:
       - git-lfs
       - libglib2.0-dev
-      - libcairo2-dev
-      - libasound2-dev
-      - libpango1.0-dev
-      - libatk1.0-dev
-      - libgdk-pixbuf2.0-dev
-      - libgtk-3-dev
-      - libudev-dev
       - libxcb-shape0-dev
       - libxcb-xfixes0-dev
       - libxcb-xkb-dev
       - libxkbcommon-dev
       - libxkbcommon-x11-dev
-      # needed for shaderc:
-      - cmake
-      - ninja-build
-      - python3
-      - python-is-python3
+      - libx11-dev
+      - libssl-dev
     override-pull: |
       snapcraftctl pull
       git-lfs install
-      git config lfs.url "https://gitlab.com/veloren/veloren.git/info/lfs"
+      git config lfs.url "https://github.com/Songtronix/Airshipper.git/info/lfs"
       git-lfs fetch
       git-lfs checkout
       version="$(git describe --always | sed -e 's/-/+git/;y/-/./')"
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "devel"
-    build-environment:
-      - VELOREN_USERDATA_STRATEGY: system
-    override-build: |
-      if ! command -v rustup 2>/dev/null; then
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile=minimal
-        export PATH="${HOME}/.cargo/bin:${PATH}"
-      fi
-      rustup override set $(cat rust-toolchain)
-      # Cannot install virtual manifest packages directly due to https://github.com/rust-lang/cargo/issues/4101
-      cargo build --release --bin veloren-voxygen --bin veloren-server-cli
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-      cp target/release/veloren-voxygen $SNAPCRAFT_PART_INSTALL/bin
-      cp target/release/veloren-server-cli $SNAPCRAFT_PART_INSTALL/bin
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/veloren
-      cp -r assets $SNAPCRAFT_PART_INSTALL/usr/share/veloren
-  # Shared libraries required by veloren at runtime
   veloren-runtime:
     plugin: nil
     stage-packages:
@@ -154,10 +128,13 @@ parts:
     - libwayland-client0
     - libwayland-cursor0
     - libwayland-egl1
+    - libxcb1
     - libxcb-render0
     - libxcb-shm0
     - libxcb-shape0
     - libxcb-xfixes0
+    - libxau6
+    - libxdmcp6
     - libxcomposite1
     - libxdamage1
     - libxext6
