@@ -81,7 +81,7 @@ parts:
       - usr/share/applications/veloren.desktop
   airshipper:
     plugin: rust
-    source: https://github.com/Songtronix/Airshipper.git
+    source: https://gitlab.com/veloren/airshipper.git
     rust-path: [client]
     build-packages:
       - git-lfs
@@ -96,7 +96,7 @@ parts:
     override-pull: |
       snapcraftctl pull
       git-lfs install
-      git config lfs.url "https://github.com/Songtronix/Airshipper.git/info/lfs"
+      git config lfs.url "https://gitlab.com/veloren/airshipper.git/info/lfs"
       git-lfs fetch
       git-lfs checkout
       version="$(git describe --tags --always | sed -e 's/-/+git/;y/-/./')"
