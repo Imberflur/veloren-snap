@@ -2,7 +2,7 @@ This is a guide for creating a new release.
 
 1. Create new release branch from `master`.
 ```bash
-git checkout -b <version> origin/master
+git checkout -b release/<version> origin/master
 ```
 
 2. Modify `snapcraft.yaml` to point to airshipper release tag.
@@ -21,6 +21,8 @@ git checkout -b <version> origin/master
 ```bash
 git commit -m "Release <version>"
 ```
+
+TODO: probably need to check that the snap builds and runs properly here
 
 3. Push new branch, create a tag for the release, and replace beta branch with this.
 ```bash
