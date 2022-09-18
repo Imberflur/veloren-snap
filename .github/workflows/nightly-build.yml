@@ -11,13 +11,17 @@ jobs:
     - name: Check for new commits
       id: check
       run: |
+        # Get the latest published commit in the edge channel
         STORE_VERSION=$(curl -sL -H "Snap-Device-Series: 16" "https://api.snapcraft.io/v2/snaps/info/veloren" \
           | jq -r '.["channel-map"][] | select(.channel.architecture == "amd64" and .channel.name == "edge") .version')
         STORE_SHORT_HASH=$(echo "$STORE_VERSION" | sed -n 's/^.*\.g\([0-9a-f]*\)$/\1/p')
         SHORT_HASH_LENGTH=${#STORE_SHORT_HASH}
-        LATEST_COMMIT=$(curl -sL "https://api.github.com/repos/Songtronix/Airshipper/commits?per_page=1&page=1" \
-          | jq -r '.[0].sha')
+        # Get the latest commit in the airshipper repo
+        # (21423598 corresponds to https://gitlab.com/veloren/airshipper)
+        LATEST_COMMIT=$(curl -sL "https://gitlab.com/api/v4/projects/21423598/repository/commits/master" \
+          | jq -r '.id')
         LATEST_SHORT_HASH=$(echo "$LATEST_COMMIT" | head -c $SHORT_HASH_LENGTH)
+        # Compare hashes and output the result for subsequent steps
         if [ "$STORE_SHORT_HASH" != "$LATEST_SHORT_HASH" ]; then
           echo "::set-output name=new-commits::true"
         else
