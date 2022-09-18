@@ -2,7 +2,12 @@
 
 This repository contains snap packaging for [Veloren](https://veloren.net/).
 
-Please note that this is an alpha version of Veloren.
+Please note that this is a pre-alpha version of Veloren.
+
+To install the published snap package, run:
+```
+snap install --beta veloren
+```
 
 ## Build
 
@@ -21,7 +26,6 @@ snapcraft
 
 For more information, please refer to the [snapcraft documentation](https://snapcraft.io/docs/snapcraft-overview).
 
-## Install
 
 To install a locally built snap package, run:
 
@@ -29,7 +33,7 @@ To install a locally built snap package, run:
 sudo snap install --dangerous veloren*.snap
 ```
 
-## Troubleshooting
+### Troubleshooting build
 
 If you receive errors similar to this one:
 
