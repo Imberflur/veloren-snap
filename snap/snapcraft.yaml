@@ -85,6 +85,7 @@ parts:
   airshipper:
     plugin: rust
     source: https://gitlab.com/veloren/airshipper.git
+    source-tag: v0.8.0 
     rust-path: [client]
     build-packages:
       - git-lfs
