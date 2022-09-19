@@ -25,7 +25,9 @@ jobs:
     - if: fromJSON(steps.check.outputs.outdated)
       name: Deploy the snap package
       uses: snapcore/action-publish@v1
+      env:
+        # generated following https://github.com/snapcore/action-publish/#store-login
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
       with:
-        store_login: ${{ secrets.SNAPCRAFT_LOGIN_DATA }}
         snap: ${{ steps.build.outputs.snap }}
         release: beta

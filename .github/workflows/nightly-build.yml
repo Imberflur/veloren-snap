@@ -37,7 +37,8 @@ jobs:
     - if: steps.check.outputs.new-commits == 'true'
       name: Deploy the snap package
       uses: snapcore/action-publish@v1
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
       with:
-        store_login: ${{ secrets.SNAPCRAFT_LOGIN_DATA }}
         snap: ${{ steps.build.outputs.snap }}
         release: edge
