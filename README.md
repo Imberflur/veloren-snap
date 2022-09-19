@@ -61,9 +61,19 @@ To do so, set the following environment variable before running `snapcraft`:
 export SNAPCRAFT_BUILD_ENVIRONMENT_MEMORY=8G
 ```
 
-Note, that this will only work if the VM does not exist, yet. To delete an existing VM,
+**Note that this will only work if the VM does not exist, yet.** To delete an existing VM,
 use `multipass list` to find the VM name (should be something like `snapcraft-veloren`)
 and `multipass delete <name>` to delete it.
+
+You can also [modify the existing
+VM](https://github.com/canonical/multipass/issues/1265#issuecomment-1209686836) via:
+```
+multipass set [local.<instance-name>.(cpus|disk|memory)](https://multipass.run/t/)]=[value]
+```
+E.g. something like:
+```bash
+multipass set local.snapcraft-veloren.memory=8G
+```
 
 ## License
 
