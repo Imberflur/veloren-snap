@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Explicitly override VOXYGEN_LOGS because otherwise
-# Veloren saves invalid log paths from previous snap revisions
-# in its settings file.
-export VOXYGEN_LOGS=$SNAP_USER_DATA/voxygen/logs
-
 # Export the Vulkan ICD filename paths
 # Based on the retroarch snap's Vulkan setup (https://github.com/libretro/retroarch-snap)
 if [ "$SNAP_ARCH" = "amd64" ]; then
