@@ -10,10 +10,13 @@ description: |
   its development community and user community is one and the same: developers,
   players, artists and musicians come together to develop the game.
 confinement: strict
+# Incorporates external info, such as the version and grade from the
+# `airshipper` part (see the `override-pull` section there).
 adopt-info: airshipper
 
 architectures:
   - build-on: amd64
+  - build-on: arm64
 
 apps:
   veloren:
