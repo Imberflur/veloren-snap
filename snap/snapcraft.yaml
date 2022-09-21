@@ -63,27 +63,30 @@ parts:
     stage:
       - bin/launcher
   icon-file:
-    plugin: dump
-    source: https://gitlab.com/veloren/veloren.git
+    plugin: nil
+    override-build: |
+      cd ${SNAPCRAFT_PART_INSTALL}
+      curl --remote-name https://gitlab.com/veloren/veloren/-/raw/master/assets/voxygen/net.veloren.veloren.png
     organize:
-      assets/voxygen/net.veloren.veloren.png: usr/share/icons/veloren.png
+      net.veloren.veloren.png: usr/share/icons/veloren.png
     stage:
       - usr/share/icons/veloren.png
   desktop-file:
-    plugin: dump
-    source: https://gitlab.com/veloren/veloren.git
-    override-pull: |
-      snapcraftctl pull
+    plugin: nil
+    override-build: |
+      cd ${SNAPCRAFT_PART_INSTALL}
+      curl --remote-name https://gitlab.com/veloren/veloren/-/raw/master/assets/voxygen/net.veloren.veloren.desktop
       # Patch icon path and executable name in desktop file
       sed -i.new 's|Exec=.*|Exec=veloren|g;s|Icon=.*|Icon=${SNAP}/usr/share/icons/veloren.png|g' \
-        assets/voxygen/net.veloren.veloren.desktop
+        net.veloren.veloren.desktop
     organize:
-      assets/voxygen/net.veloren.veloren.desktop: usr/share/applications/veloren.desktop
+      net.veloren.veloren.desktop: usr/share/applications/veloren.desktop
     stage:
       - usr/share/applications/veloren.desktop
   airshipper:
     plugin: rust
     source: https://gitlab.com/veloren/airshipper.git
+    source-depth: 1
     rust-path: [client]
     build-packages:
       - git-lfs
@@ -97,10 +100,6 @@ parts:
       - libssl-dev
     override-pull: |
       snapcraftctl pull
-      git-lfs install
-      git config lfs.url "https://gitlab.com/veloren/airshipper.git/info/lfs"
-      git-lfs fetch
-      git-lfs checkout
       version="$(git describe --tags --always | sed -e 's/-/+git/;y/-/./')"
       snapcraftctl set-version "$version"
       snapcraftctl set-grade "devel"
@@ -159,6 +158,7 @@ parts:
   alsa-mixin:
     plugin: dump
     source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-depth: 1
     source-commit: c08d5df21761b56679088b06411694b00fff9475
     source-subdir: snapcraft-assets
     build-packages:
@@ -170,6 +170,7 @@ parts:
   # this is required in order for Veloren to use ibus
   glib-only:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-depth: 1
     source-subdir: glib-only
     plugin: make
     build-packages:
