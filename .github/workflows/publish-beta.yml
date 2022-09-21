@@ -1,0 +1,31 @@
+name: 'Publish beta'
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'beta'
+
+jobs:
+  publish-beta:
+    name: 'Publish beta'
+    runs-on: 'ubuntu-latest'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: beta
+    - name: Build the snap package
+      id: build
+      uses: snapcore/action-build@v1
+    # NOTE: I think this won't race with security-updates since that would publish a snap with an
+    # older version label (if it isn't building the same thing we are building here in which case
+    # race to publish would not be an issue)? May want to look into `concurrency` parameter for
+    # these workflows though. (TODO: test by pushing older release to beta branch?)
+    - name: Deploy the snap package
+      uses: snapcore/action-publish@v1
+      env:
+        # generated following https://github.com/snapcore/action-publish/#store-login
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+      with:
+        snap: ${{ steps.build.outputs.snap }}
+        release: beta

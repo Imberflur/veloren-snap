@@ -1,5 +1,6 @@
 name: 'Security updates'
 on:
+  workflow_dispatch:
   schedule:
   - cron: '0 2 * * *'
 
@@ -26,7 +27,6 @@ jobs:
       name: Deploy the snap package
       uses: snapcore/action-publish@v1
       env:
-        # generated following https://github.com/snapcore/action-publish/#store-login
         SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
       with:
         snap: ${{ steps.build.outputs.snap }}
