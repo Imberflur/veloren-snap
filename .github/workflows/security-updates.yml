@@ -4,6 +4,12 @@ on:
   schedule:
   - cron: '0 2 * * *'
 
+# NOTE: This is to prevent races to publish between publish-beta and security-updates workflows (or
+# in fact, races with instances of themselves if that is possible). If adding things to this
+# concurrency group, be aware that any pending workflow will be cancelled if another one in this
+# group is triggered.
+concurrency: beta-channel
+
 jobs:
   security-updates:
     name: 'Security updates'

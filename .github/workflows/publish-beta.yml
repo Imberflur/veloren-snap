@@ -5,6 +5,12 @@ on:
     branches:
       - 'beta'
 
+# NOTE: This is to prevent races to publish between publish-beta and security-updates workflows (or
+# in fact, races with instances of themselves if that is possible). If adding things to this
+# concurrency group, be aware that any pending workflow will be cancelled if another one in this
+# group is triggered.
+concurrency: beta-channel
+
 jobs:
   publish-beta:
     name: 'Publish beta'
@@ -17,10 +23,6 @@ jobs:
     - name: Build the snap package
       id: build
       uses: snapcore/action-build@v1
-    # NOTE: I think this won't race with security-updates since that would publish a snap with an
-    # older version label (if it isn't building the same thing we are building here in which case
-    # race to publish would not be an issue)? May want to look into `concurrency` parameter for
-    # these workflows though. (TODO: test by pushing older release to beta branch?)
     - name: Deploy the snap package
       uses: snapcore/action-publish@v1
       env:
