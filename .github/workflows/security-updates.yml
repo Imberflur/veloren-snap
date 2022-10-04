@@ -30,6 +30,9 @@ jobs:
       name: Build the snap package
       uses: snapcore/action-build@v1
     - if: fromJSON(steps.check.outputs.outdated)
+      name: Log sha384sum
+      run: sha384sum --binary ${{ steps.build.outputs.snap }}
+    - if: fromJSON(steps.check.outputs.outdated)
       name: Deploy the snap package
       uses: snapcore/action-publish@v1
       env:
