@@ -25,13 +25,14 @@ jobs:
       with:
         snap: veloren
         channel: beta
+    # Without this the build action below will set veloren_beta.snap as the
+    # output instead of the newly build snap!
+    - name: Cleanup checked snap
+      run: rm *.snap
     - if: fromJSON(steps.check.outputs.outdated)
       id: build
       name: Build the snap package
       uses: snapcore/action-build@v1
-    - if: fromJSON(steps.check.outputs.outdated)
-      name: Log sha384sum
-      run: sha384sum --binary ${{ steps.build.outputs.snap }}
     - if: fromJSON(steps.check.outputs.outdated)
       name: Deploy the snap package
       uses: snapcore/action-publish@v1
