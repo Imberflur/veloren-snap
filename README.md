@@ -1,3 +1,5 @@
+__**Status: This is not currently maintained. See other options at <https://veloren.net/download/>.**__
+
 # Snap package for Veloren
 
 This repository contains snap packaging for [Veloren](https://veloren.net/).
